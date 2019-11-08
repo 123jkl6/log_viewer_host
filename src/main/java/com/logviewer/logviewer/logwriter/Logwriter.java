@@ -12,10 +12,10 @@ public class Logwriter {
         if (envName==null || envName.equals("")){
             envName = "UAT1";
         }
-        LocalDate date = LocalDate.now();
+        //LocalDate date = LocalDate.now();
         LocalDateTime timestamp = LocalDateTime.now();
         String timestampString = timestamp.toString().replaceAll("-|:","").split("\\.")[0];
-        String fileName = envName+"/logs/"+date.toString().replaceAll("-","")+"/"+timestampString+"_"+(username==null?"":username+"+_")+serviceName+".log";
+        String fileName = envName+"/logs/"+getDateForToday()+"/"+timestampString+"_"+(username==null?"":username+"+_")+serviceName+".log";
         System.out.println("writing to "+fileName);
         File logsFile = new File(fileName);
         logsFile.getParentFile().mkdirs();
@@ -24,5 +24,11 @@ public class Logwriter {
         fw.write(timestamp.toString()+" "+serviceName+"\nRQ_JSON="+request+"\n"+"RS_JSON="+response);
         fw.close();
         System.out.println("written to "+fileName);
+    }
+
+    public static String getDateForToday(){
+        LocalDate date = LocalDate.now();
+        String resultString = date.toString().replaceAll("-","");
+        return resultString;
     }
 }
