@@ -1,4 +1,4 @@
-package com.logviewer.logviewer.model;
+package com.logviewer.logviewer.model.demo;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

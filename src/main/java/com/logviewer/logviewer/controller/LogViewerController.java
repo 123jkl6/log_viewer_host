@@ -1,13 +1,12 @@
 package com.logviewer.logviewer.controller;
 
+import com.logviewer.logviewer.model.logviewer.SearchLogsRequest;
 import com.logviewer.logviewer.service.LogViewerService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,6 +34,23 @@ public class LogViewerController {
         logger.info("Retrieved all logs for " + currentDate);
         return allLogsResults;
     }
+
+    @GetMapping("search")
+    public List<String> searchLogs(@PathVariable("envName") String envName, @RequestBody(required = false) SearchLogsRequest searchLogsRequest){
+        List<String> results;
+
+        //validate request body first, if no input given, retrieve all logs today, use getAllLogsForToday
+        if (searchLogsRequest==null){
+            results = logViewerService.getAllLogsForToday(envName);
+        }
+        else {
+            logger.info(" SearchLogsRequest=" + searchLogsRequest.toString());
+            results = logViewerService.searchLogs(envName, searchLogsRequest.getDate()==null?null:searchLogsRequest.getDate().toString().replaceAll("-",""), searchLogsRequest.getTxnReferenceNumber(), searchLogsRequest.getServiceName(), searchLogsRequest.getUsername());
+        }
+
+        return results;
+    }
+
     @GetMapping("{fileName}")
     public byte[] getSingleLogs(@PathVariable("envName") String envName, @PathVariable("fileName") String fileName){
         logger.info("Retrieving logs for "+fileName);

@@ -1,4 +1,4 @@
-package com.logviewer.logviewer.model;
+package com.logviewer.logviewer.model.demo;
 
 public class ErrorResponse {
     private String reponseCode;

@@ -1,7 +1,7 @@
 package com.logviewer.logviewer.service;
 
 import com.logviewer.logviewer.exceptions.FailedOTPAuthenticationException;
-import com.logviewer.logviewer.model.*;
+import com.logviewer.logviewer.model.demo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

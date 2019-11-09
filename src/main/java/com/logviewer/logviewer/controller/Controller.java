@@ -4,7 +4,7 @@ import com.logviewer.logviewer.exceptions.FailedOTPAuthenticationException;
 import com.logviewer.logviewer.exceptions.MissingFieldException;
 import com.logviewer.logviewer.exceptions.UnprocessableFieldException;
 import com.logviewer.logviewer.logwriter.Logwriter;
-import com.logviewer.logviewer.model.*;
+import com.logviewer.logviewer.model.demo.*;
 import com.logviewer.logviewer.service.AppService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
