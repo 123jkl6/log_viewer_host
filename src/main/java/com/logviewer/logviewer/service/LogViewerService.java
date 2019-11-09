@@ -57,67 +57,107 @@ public class LogViewerService {
             date = LocalDate.now().toString().replaceAll("-","");
         }
 
+        //with date given, retrieve all logs first, filter later
+        rawResults = convertAbsolutePathToFilename(logViewerDAO.getAllLogsByDate(envName,date));
+
         if (username!=null && serviceName != null && txnReferenceNumber != null) {
             //search for that match all 3 criteria
             logger.info("searching by username, serviceName and transaction reference");
-
+            results = filterByUsernameAndServiceNameAndTransactionReference(rawResults,username,serviceName,txnReferenceNumber);
         } else if (username!=null && serviceName!=null && txnReferenceNumber==null) {
             //only username and serviceName given
             logger.info("searching by username and serviceName");
-
+            results = filterByUsernameAndServiceName(rawResults,username,serviceName);
         } else if (username!=null && txnReferenceNumber!=null && serviceName==null){
             //only username and transaction ref given
             logger.info("searching by username and transaction reference");
-
+            results = filterByUsernameAndTransactionReference(rawResults,username,txnReferenceNumber);
         } else if (txnReferenceNumber!=null && serviceName!=null && username==null){
             //only transaction ref and service name given
             logger.info("searching by serviceName and transaction reference");
-
+            results = filterByTransactionReferenceAndServiceName(rawResults,txnReferenceNumber,serviceName);
         } else if (username!=null && serviceName==null && txnReferenceNumber==null){
             //only username given
             logger.info("searching by only username");
-            rawResults = convertAbsolutePathToFilename(logViewerDAO.getAllLogsByDate(envName,date));
             results = filterByUsername(rawResults,username);
         } else if (serviceName!=null && username==null && txnReferenceNumber==null){
             //only serviceName given
             logger.info("searching by only serviceName");
-
+            results = filterByServiceName(rawResults,serviceName);
         } else if (txnReferenceNumber!=null && username==null && serviceName==null){
             //only transaction reference given
             logger.info("searching by only transaction reference");
-
+            results = filterByTransactionReference(rawResults,txnReferenceNumber);
         } else {
             //last case, username, serviceName and transaction ref not provided.
             //use previously implemented method to retrive all logs
-            logger.info("searching by only date");
-            rawResults = logViewerDAO.getAllLogsByDate(envName,date);
-            results = convertAbsolutePathToFilename(rawResults);
+//            logger.info("searching by only date");
+//            rawResults = logViewerDAO.getAllLogsByDate(envName,date);
+//            results = convertAbsolutePathToFilename(rawResults);
+            //do nothing, already queried by date in the beginning.
         }
 
         return results;
     }
 
 
-    public List<String> filterByUsernameAndServiceNameAndTransactionReference(List<String> rawResults,String serviceName){
+    public List<String> filterByUsernameAndServiceNameAndTransactionReference(List<String> rawResults,String username, String serviceName, String txnReferenceNumber){
         List<String> result = new ArrayList<String>();
+
+        result = rawResults.stream().filter(oneFileName->{
+            String[] fileNameArr = oneFileName.split("_");
+            if (fileNameArr.length==4 && fileNameArr[2].equals(username) && fileNameArr[3].split("\\.")[0].equals(serviceName) && fileNameArr[1].equals(txnReferenceNumber)){
+                return true;
+            }
+
+            return false;
+        }).collect(Collectors.toList());
 
         return result;
     }
 
-    public List<String> filterByUsernameAndServiceName(List<String> rawResults,String serviceName){
+    public List<String> filterByUsernameAndServiceName(List<String> rawResults, String username, String serviceName){
         List<String> result = new ArrayList<String>();
+
+        result = rawResults.stream().filter(oneFileName->{
+            String[] fileNameArr = oneFileName.split("_");
+            if (fileNameArr.length==4 && fileNameArr[2].equals(username) && fileNameArr[3].split("\\.")[0].equals(serviceName)){
+                return true;
+            }
+
+            return false;
+        }).collect(Collectors.toList());
+
 
         return result;
     }
 
-    public List<String> filterByUsernameAndTransactionReference(List<String> rawResults,String serviceName){
+    public List<String> filterByUsernameAndTransactionReference(List<String> rawResults,String username, String txnReferenceNumber){
         List<String> result = new ArrayList<String>();
+
+        result = rawResults.stream().filter(oneFileName->{
+            String[] fileNameArr = oneFileName.split("_");
+            if (fileNameArr.length==4 && fileNameArr[2].equals(username) && fileNameArr[1].equals(txnReferenceNumber)){
+                return true;
+            }
+
+            return false;
+        }).collect(Collectors.toList());
 
         return result;
     }
 
-    public List<String> filterByTransactionReferceAndServiceName(List<String> rawResults,String serviceName){
+    public List<String> filterByTransactionReferenceAndServiceName(List<String> rawResults, String txnReferenceNumber, String serviceName){
         List<String> result = new ArrayList<String>();
+
+        result = rawResults.stream().filter(oneFileName->{
+            String[] fileNameArr = oneFileName.split("_");
+            if (fileNameArr[fileNameArr.length-1].split("\\.")[0].equals(serviceName) && fileNameArr[1].equals(txnReferenceNumber)){
+                return true;
+            }
+
+            return false;
+        }).collect(Collectors.toList());
 
         return result;
     }
@@ -127,6 +167,8 @@ public class LogViewerService {
 
         result = rawResults.stream().filter(oneFileName->{
             String[] fileNameArr = oneFileName.split("_");
+            //check for length to account for cases for which services are not linked to username, but the transaction reference
+            //matches the username input.
             if (fileNameArr.length==4 && fileNameArr[2].equals(username)){
                 return true;
             }
@@ -138,13 +180,31 @@ public class LogViewerService {
     }
 
     public List<String>  filterByServiceName(List<String> rawResults,String serviceName){
-        List<String> result = new ArrayList<String>();
+        List<String> result;
+
+        result = rawResults.stream().filter(oneFileName->{
+            String[] fileNameArr = oneFileName.split("_");
+            if (fileNameArr[fileNameArr.length-1].split("\\.")[0].equals(serviceName)){
+                return true;
+            }
+
+            return false;
+        }).collect(Collectors.toList());
 
         return result;
     }
 
     public List<String>  filterByTransactionReference(List<String> rawResults,String txnReferenceNumber){
         List<String> result = new ArrayList<String>();
+
+        result = rawResults.stream().filter(oneFileName->{
+            String[] fileNameArr = oneFileName.split("_");
+            if (fileNameArr[1].equals(txnReferenceNumber)){
+                return true;
+            }
+
+            return false;
+        }).collect(Collectors.toList());
 
         return result;
     }
