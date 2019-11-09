@@ -66,7 +66,14 @@ public class AppService {
         String otp = loginRequest.getUserCredentials().getSmsOTPObject().getOtp();
         //accept only 1 otp for now
         if (!otp.equals("111111")){
-            throw new FailedOTPAuthenticationException("Invalid OTP.");
+            FailedOTPAuthenticationException foae = new FailedOTPAuthenticationException("Invalid OTP.");
+            LogInfoBean lib= new LogInfoBean();
+            lib.setTxnReferenceNumber(loginRequest.getTxnReferenceNumber());
+            lib.setServiceName("login2FASMS");
+            lib.setUsername(loginRequest.getUserCredentials().getUserId());
+            lib.setRequestString(loginRequest.toString());
+            foae.setLogInfoBean(lib);
+            throw foae;
         }
 
         LoginResponse loginResponse = new LoginResponse();

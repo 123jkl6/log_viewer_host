@@ -1,5 +1,7 @@
 package com.logviewer.logviewer.model.demo;
 
+import com.logviewer.logviewer.logwriter.JSONStringify;
+
 public class ErrorResponse {
     private String reponseCode;
     private ErrorException errorException;
@@ -20,4 +22,8 @@ public class ErrorResponse {
         this.errorException = errorException;
     }
 
+    public String toString(){
+        JSONStringify<ErrorResponse> stringifier = new JSONStringify<ErrorResponse>();
+        return stringifier.stringify(this);
+    }
 }

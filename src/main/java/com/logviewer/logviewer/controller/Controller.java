@@ -68,25 +68,43 @@ public class Controller {
         if (loginType==null || loginRequest.getUserCredentials()==null || txnReferenceNumber==null){
             logger.error(txnReferenceNumber + " There is a missing field.");
             logger.error(txnReferenceNumber + " RQ_JSON="+loginRequest.toString());
-            throw new MissingFieldException(txnReferenceNumber + " missing field");
+            MissingFieldException mfe = new MissingFieldException(txnReferenceNumber + " missing field");
+            LogInfoBean lib = new LogInfoBean();
+            lib.setTxnReferenceNumber(txnReferenceNumber);
+            lib.setRequestString(loginRequest.toString());
+            mfe.setLogInfoBean(lib);
+            throw mfe;
         }
         String username = loginRequest.getUserCredentials().getUserId();
         logger.info(txnReferenceNumber + "Initial validations completed, proceeding with loginType " + loginType +" for " + username!=null?username:"");
 
         if (loginType.equals("AUTH001")) {
+            serviceName = "login1FA";
             //performing validations for username and password field
             if (username==null){
                 logger.error(txnReferenceNumber + " username is missing");
                 logger.error(txnReferenceNumber + " RQ_JSON="+loginRequest.toString());
-                throw new MissingFieldException(txnReferenceNumber + "username is missing");
+                MissingFieldException mfe = new MissingFieldException(txnReferenceNumber + "username is missing");
+                LogInfoBean lib = new LogInfoBean();
+                lib.setTxnReferenceNumber(txnReferenceNumber);
+                lib.setServiceName(serviceName);
+                lib.setRequestString(loginRequest.toString());
+                mfe.setLogInfoBean(lib);
+                throw mfe;
             }
             if (loginRequest.getUserCredentials().getEncryptedPin()==null){
                 logger.error(txnReferenceNumber + " encryptedPin is missing");
                 logger.error(txnReferenceNumber + " RQ_JSON="+loginRequest.toString());
-                throw new MissingFieldException(txnReferenceNumber + "enryptedPin is missing");
+                MissingFieldException mfe = new MissingFieldException(txnReferenceNumber + "enryptedPin is missing");
+                LogInfoBean lib = new LogInfoBean();
+                lib.setTxnReferenceNumber(txnReferenceNumber);
+                lib.setUsername(username);
+                lib.setServiceName(serviceName);
+                lib.setRequestString(loginRequest.toString());
+                mfe.setLogInfoBean(lib);
+                throw mfe;
             }
 
-            serviceName = "login1FA";
             loginResponse = appService.login1FA(loginRequest);
         } else if (loginType.equals("AUTH004")) {
             serviceName = "login2FASMS";
@@ -95,13 +113,27 @@ public class Controller {
             if (loginRequest.getUserCredentials().getSmsOTPObject()==null){
                 logger.error(txnReferenceNumber + " smsOTPObject is missing");
                 logger.error(txnReferenceNumber + " RQ_JSON="+loginRequest.toString());
-                throw new MissingFieldException(txnReferenceNumber + " smsOTPObject is missing");
+                MissingFieldException mfe = new MissingFieldException(txnReferenceNumber + " smsOTPObject is missing");
+                LogInfoBean lib = new LogInfoBean();
+                lib.setTxnReferenceNumber(txnReferenceNumber);
+                lib.setUsername(username);
+                lib.setServiceName(serviceName);
+                lib.setRequestString(loginRequest.toString());
+                mfe.setLogInfoBean(lib);
+                throw mfe;
             }
             SMSOTPObject smsOTPObject = loginRequest.getUserCredentials().getSmsOTPObject();
             if (smsOTPObject.getOtp()==null || smsOTPObject.getOpaque()==null){
                 logger.error(txnReferenceNumber + " otp or opaque is missing");
                 logger.error(txnReferenceNumber + " RQ_JSON="+loginRequest.toString());
-                throw new MissingFieldException(txnReferenceNumber + " otp or opaque is missing");
+                MissingFieldException mfe = new MissingFieldException(txnReferenceNumber + " otp or opaque is missing");
+                LogInfoBean lib = new LogInfoBean();
+                lib.setTxnReferenceNumber(txnReferenceNumber);
+                lib.setUsername(username);
+                lib.setServiceName(serviceName);
+                lib.setRequestString(loginRequest.toString());
+                mfe.setLogInfoBean(lib);
+                throw mfe;
             }
 
             logger.info(txnReferenceNumber + " additional validations for 2FA SMS is complete, proceeding with login2FASMS");
