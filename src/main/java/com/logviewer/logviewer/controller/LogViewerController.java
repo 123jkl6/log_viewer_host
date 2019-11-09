@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,17 +22,24 @@ public class LogViewerController {
     private LogViewerService logViewerService;
 
     @GetMapping("ping")
-    public String ping(){
+    public String ping(@PathVariable("envName") String envName){
+        logger.info("Pinging for environment +"+envName!=null?envName:"");
         return "pinged";
     }
 
     @GetMapping("today")
     public List<String> getAllLogsForToday(@PathVariable("envName") String envName){
-        return logViewerService.getAllLogsForToday(envName);
+        LocalDate currentDate = LocalDate.now();
+        logger.info("Retrieving all logs available for " + currentDate);
+        List<String> allLogsResults = logViewerService.getAllLogsForToday(envName);
+        logger.info("Retrieved all logs for " + currentDate);
+        return allLogsResults;
     }
     @GetMapping("{fileName}")
     public byte[] getSingleLogs(@PathVariable("envName") String envName, @PathVariable("fileName") String fileName){
         logger.info("Retrieving logs for "+fileName);
-        return logViewerService.getSingleLog(envName,fileName);
+        byte[] logs = logViewerService.getSingleLog(envName,fileName);
+        logger.info("Retrieved logs for "+fileName);
+        return logs;
     }
 }

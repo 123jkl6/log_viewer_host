@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 
 public class Logwriter {
 
-    public static void writeLogs(String request, String response, String serviceName, String username, String envName) throws IOException {
+    public static void writeLogs(String request, String response, String txnReferenceNumber, String serviceName, String username, String envName) throws IOException {
         if (envName==null || envName.equals("")){
             envName = "UAT1";
         }
         //LocalDate date = LocalDate.now();
         LocalDateTime timestamp = LocalDateTime.now();
         String timestampString = timestamp.toString().replaceAll("-|:","").split("\\.")[0];
-        String fileName = envName+"/logs/"+getDateForToday()+"/"+timestampString+"_"+(username==null?"":username+"+_")+serviceName+".log";
+        String fileName = envName+"/logs/"+getDateForToday()+"/"+timestampString+"_"+txnReferenceNumber+"_"+(username==null?"":username+"_")+serviceName+".log";
         System.out.println("writing to "+fileName);
         File logsFile = new File(fileName);
         logsFile.getParentFile().mkdirs();

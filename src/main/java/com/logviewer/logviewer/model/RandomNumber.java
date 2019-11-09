@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class RandomNumber {
-    public String responseCode;
-    public String random;
+    private String responseCode;
+    private String random;
 
     public String getResponseCode() {
         return responseCode;

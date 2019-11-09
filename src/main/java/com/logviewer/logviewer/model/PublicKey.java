@@ -5,8 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PublicKey {
-    public String responseCode;
-    public String modulus;
+    private String responseCode;
+    private String modulus;
 
     public String getResponseCode() {
         return responseCode;
