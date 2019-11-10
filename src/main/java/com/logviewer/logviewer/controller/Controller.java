@@ -161,7 +161,7 @@ public class Controller {
     @PostMapping("am/otp/generate")
     public OTPResponse generateOTP(@RequestBody LoginRequest loginRequest) throws IOException {
         String txnReferenceNumber = loginRequest.getTxnReferenceNumber();
-        UserCredentials userCreds = loginRequest.getUserCredentials(); 
+        UserCredentials userCreds = loginRequest.getUserCredentials();
         String username = null;
 
         if (userCreds!=null){

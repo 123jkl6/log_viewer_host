@@ -2,12 +2,11 @@ package com.logviewer.logviewer.dao;
 
 import com.logviewer.logviewer.logwriter.Logwriter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +21,20 @@ public class LogViewerDAO {
 
     @Value("${logs.path}")
     private String logsPath;
+
+    public List<String> getServiceNames(){
+        List<String> serviceNames = new ArrayList<String>();
+        ClassPathResource cl = new ClassPathResource("service_names");
+
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(cl.getURL().openStream()))) {
+            Stream<String> stream = br.lines();
+            serviceNames = stream.collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return serviceNames;
+    }
 
     public List<String> getAllLogsByDate(String envName,String currentDate) {
         List<String> result = new ArrayList<String>();

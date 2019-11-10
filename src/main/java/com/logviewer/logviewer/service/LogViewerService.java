@@ -27,6 +27,11 @@ public class LogViewerService {
     @Value("${logs.path}")
     private String logsPath;
 
+    public List<String> getServiceNames(){
+        List<String> serviceNames = logViewerDAO.getServiceNames();
+        return serviceNames;
+    }
+
     public List<String> getAllLogsForToday(String envName){
         String currentDate = Logwriter.getDateForToday();
         List<String> result = new ArrayList<String>();
