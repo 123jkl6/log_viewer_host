@@ -16,6 +16,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
 
+@CrossOrigin
 @RestController
 public class Controller {
 

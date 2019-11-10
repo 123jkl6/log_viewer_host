@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("logs/{envName}")
 public class LogViewerController {
@@ -47,6 +48,7 @@ public class LogViewerController {
             logger.info(" SearchLogsRequest=" + searchLogsRequest.toString());
             results = logViewerService.searchLogs(envName, searchLogsRequest.getDate()==null?null:searchLogsRequest.getDate().toString().replaceAll("-",""), searchLogsRequest.getTxnReferenceNumber(), searchLogsRequest.getServiceName(), searchLogsRequest.getUsername());
         }
+        logger.info(" Search logs response  : " + results);
 
         return results;
     }

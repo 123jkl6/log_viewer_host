@@ -97,9 +97,11 @@ public class LogViewerService {
             //last case, username, serviceName and transaction ref not provided.
             //use previously implemented method to retrive all logs
 //            logger.info("searching by only date");
-//            rawResults = logViewerDAO.getAllLogsByDate(envName,date);
-//            results = convertAbsolutePathToFilename(rawResults);
+            logger.info("Reached else case in seacrhLogs() searching only by date. ");
+            rawResults = logViewerDAO.getAllLogsByDate(envName,date);
+            results = convertAbsolutePathToFilename(rawResults);
             //do nothing, already queried by date in the beginning.
+
         }
 
         return results;
