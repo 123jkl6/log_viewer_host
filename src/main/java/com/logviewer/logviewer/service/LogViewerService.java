@@ -98,8 +98,7 @@ public class LogViewerService {
             //use previously implemented method to retrive all logs
 //            logger.info("searching by only date");
             logger.info("Reached else case in seacrhLogs() searching only by date. ");
-            rawResults = logViewerDAO.getAllLogsByDate(envName,date);
-            results = convertAbsolutePathToFilename(rawResults);
+            results = rawResults;
             //do nothing, already queried by date in the beginning.
 
         }
