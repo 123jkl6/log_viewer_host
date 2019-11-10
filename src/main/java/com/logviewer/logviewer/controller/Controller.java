@@ -157,4 +157,25 @@ public class Controller {
         Logwriter.writeLogs(loginRequest.toString(),loginResponse.toString(),txnReferenceNumber,serviceName,username,envName);
         return loginResponse;
     }
+
+    @PostMapping("am/otp/generate")
+    public OTPResponse generateOTP(@RequestBody LoginRequest loginRequest) throws IOException {
+        String txnReferenceNumber = loginRequest.getTxnReferenceNumber();
+        UserCredentials userCreds = loginRequest.getUserCredentials(); 
+        String username = null;
+
+        if (userCreds!=null){
+            if (userCreds.getUserId()!=null && !userCreds.getUserId().trim().equals("")){
+                username = userCreds.getUserId();
+            }
+        }
+
+        logger.info(txnReferenceNumber + " generateOTP for user : "+username);
+        OTPResponse otpResponse = appService.generateOTP(loginRequest);
+        logger.info(txnReferenceNumber + " generateOTP OTP successfully generated, now returning.");
+        logger.info(txnReferenceNumber + " RQ_JSON="+loginRequest.toString());
+        logger.info(txnReferenceNumber + " RS_JSON=" + otpResponse.toString());
+        Logwriter.writeLogs(loginRequest.toString(),otpResponse.toString(),txnReferenceNumber,"generateOTP",username,envName);
+        return otpResponse;
+    }
 }

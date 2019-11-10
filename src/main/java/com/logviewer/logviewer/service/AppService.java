@@ -10,10 +10,15 @@ import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AppService {
+
     Logger logger = LoggerFactory.getLogger(AppService.class);
+
+    private final String alphanumericStore = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
     public RandomNumber getRandomNumber(){
         logger.info(AppService.class.toString()+" : getRandomNumber()");
@@ -91,8 +96,41 @@ public class AppService {
     }
     public LoginResponse login2AToken(LoginRequest loginRequest){
 
-
         return null;
+    }
+
+    public OTPResponse generateOTP(LoginRequest loginRequest){
+        String txnReferenceNumber = loginRequest.getTxnReferenceNumber();
+        OTPResponse otpResponse = new OTPResponse();
+        SecureRandom sr = new SecureRandom();
+        List<Integer> otpList = sr.ints(6,0,9).boxed().collect(Collectors.toList());
+        List<Integer> opaqueList = sr.ints(10,0,36).boxed().collect(Collectors.toList());
+
+        logger.info(txnReferenceNumber + " OTP list" + otpList);
+        logger.info(txnReferenceNumber + "opaque list" + opaqueList);
+
+        StringBuilder otpBuilder = new StringBuilder();
+
+        for(Integer oneDigit : otpList){
+            otpBuilder.append(oneDigit);
+        }
+
+        StringBuilder opaqaueBuilder = new StringBuilder();
+
+        for (Integer oneDigit : opaqueList){
+            opaqaueBuilder.append(this.alphanumericStore.charAt(oneDigit));
+        }
+
+        //create new SMSOTPObject
+        SMSOTPObject smsotpObject = new SMSOTPObject();
+        smsotpObject.setOtp(otpBuilder.toString());
+        smsotpObject.setOpaque(opaqaueBuilder.toString());
+
+        //set OTPResponse
+        otpResponse.setResponseCode("0");
+        otpResponse.setSmsOTPObject(smsotpObject);
+
+        return otpResponse;
     }
 
     public String getPublicKey(){
