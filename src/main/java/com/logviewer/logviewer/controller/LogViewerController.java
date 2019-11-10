@@ -35,7 +35,7 @@ public class LogViewerController {
         return allLogsResults;
     }
 
-    @GetMapping("search")
+    @PostMapping("search")
     public List<String> searchLogs(@PathVariable("envName") String envName, @RequestBody(required = false) SearchLogsRequest searchLogsRequest){
         List<String> results;
 
