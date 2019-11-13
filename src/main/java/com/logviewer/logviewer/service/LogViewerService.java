@@ -243,4 +243,8 @@ public class LogViewerService {
         }
         return logsResults;
     }
+
+    public void writeLogs(String request, String response, String txnReferenceNumber, String serviceName, String username, String envName) throws IOException {
+        logViewerDAO.writeLogs(request,response,txnReferenceNumber,serviceName,username,envName);
+    }
 }

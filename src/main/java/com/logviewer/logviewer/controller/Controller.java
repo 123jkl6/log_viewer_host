@@ -3,9 +3,10 @@ package com.logviewer.logviewer.controller;
 import com.logviewer.logviewer.exceptions.FailedOTPAuthenticationException;
 import com.logviewer.logviewer.exceptions.MissingFieldException;
 import com.logviewer.logviewer.exceptions.UnprocessableFieldException;
-import com.logviewer.logviewer.logwriter.Logwriter;
+//import com.logviewer.logviewer.logwriter.Logwriter;
 import com.logviewer.logviewer.model.demo.*;
 import com.logviewer.logviewer.service.AppService;
+import com.logviewer.logviewer.service.LogViewerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class Controller {
     @Autowired
     AppService appService;
 
+    @Autowired
+    LogViewerService logViewerService;
+
     @GetMapping("ping")
     public String ping(@RequestBody CryptoRequest cryptoRequest) throws IOException {
         String txnReferenceNumber = null;
@@ -35,11 +39,13 @@ public class Controller {
             txnReferenceNumber = appService.generateTransactionRef();
             cryptoRequest.setTxnReferenceNumber(txnReferenceNumber);
         }
+        txnReferenceNumber = cryptoRequest.getTxnReferenceNumber();
         String pingResponse = "pinged";
         logger.info(txnReferenceNumber+" ping() pinging logs service");
         logger.info(txnReferenceNumber+" RQ_JSON="+cryptoRequest!=null?cryptoRequest.toString():"");
         logger.info(txnReferenceNumber+" RS_JSON="+pingResponse);
-        Logwriter.writeLogs(cryptoRequest.toString(),pingResponse.toString(), txnReferenceNumber,"ping",null,this.envName);
+        //Logwriter.writeLogs(cryptoRequest.toString(),pingResponse.toString(), txnReferenceNumber,"ping",null,this.envName);
+        logViewerService.writeLogs(cryptoRequest.toString(),pingResponse,txnReferenceNumber,"ping",null,this.envName);
         return pingResponse;
     }
 
@@ -52,7 +58,8 @@ public class Controller {
         logger.info(txnReferenceNumber+" getRandomNumber() done");
         logger.info(txnReferenceNumber+" RQ_JSON="+cryptoRequest.toString());
         logger.info(txnReferenceNumber+" RS_JSON="+rand.toString());
-        Logwriter.writeLogs(cryptoRequest.toString(),rand.toString(), txnReferenceNumber,"getRandomNumber",null,this.envName);
+        //Logwriter.writeLogs(cryptoRequest.toString(),rand.toString(), txnReferenceNumber,"getRandomNumber",null,this.envName);
+        logViewerService.writeLogs(cryptoRequest.toString(),rand.toString(), txnReferenceNumber,"getRandomNumber",null,this.envName);
         return rand;
     }
 
@@ -155,7 +162,8 @@ public class Controller {
         logger.info(txnReferenceNumber + " " + loginType + " " + serviceName + " login() function is complete. ");
         logger.info(txnReferenceNumber + " RQ_JSON="+loginRequest.toString());
         logger.info(txnReferenceNumber + " RS_JSON="+loginResponse.toString());
-        Logwriter.writeLogs(loginRequest.toString(),loginResponse.toString(),txnReferenceNumber,serviceName,username,envName);
+        //Logwriter.writeLogs(loginRequest.toString(),loginResponse.toString(),txnReferenceNumber,serviceName,username,envName);
+        logViewerService.writeLogs(loginRequest.toString(),loginResponse.toString(),txnReferenceNumber,serviceName,username,envName);
         return loginResponse;
     }
 
@@ -176,7 +184,8 @@ public class Controller {
         logger.info(txnReferenceNumber + " generateOTP OTP successfully generated, now returning.");
         logger.info(txnReferenceNumber + " RQ_JSON="+loginRequest.toString());
         logger.info(txnReferenceNumber + " RS_JSON=" + otpResponse.toString());
-        Logwriter.writeLogs(loginRequest.toString(),otpResponse.toString(),txnReferenceNumber,"generateOTP",username,envName);
+        //Logwriter.writeLogs(loginRequest.toString(),otpResponse.toString(),txnReferenceNumber,"generateOTP",username,envName);
+        logViewerService.writeLogs(loginRequest.toString(),otpResponse.toString(),txnReferenceNumber,"generateOTP",username,envName);
         return otpResponse;
     }
 }
