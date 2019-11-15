@@ -56,6 +56,14 @@ public class LogViewerDAO {
         return logsResults;
     }
 
+    public String getSingleLogText(String envName, String date, String fileName) throws IOException {
+        String fileAbsolutePath = logsPath+"/"+envName+"/logs/"+date+"/"+fileName;
+        FileReader fr = new FileReader(fileAbsolutePath);
+        BufferedReader bfr = new BufferedReader(fr);
+        String singleLogText = bfr.lines().reduce((i,j)->i+j).get();
+        return singleLogText;
+    }
+
     public void writeLogs(String request, String response, String txnReferenceNumber, String serviceName, String username, String envName) throws IOException {
         if (envName==null || envName.equals("")){
             envName = "UAT1";

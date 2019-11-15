@@ -104,7 +104,7 @@ public class AppService {
         OTPResponse otpResponse = new OTPResponse();
         SecureRandom sr = new SecureRandom();
         List<Integer> otpList = sr.ints(6,0,9).boxed().collect(Collectors.toList());
-        List<Integer> opaqueList = sr.ints(10,0,36).boxed().collect(Collectors.toList());
+        List<Integer> opaqueList = sr.ints(10,0,35).boxed().collect(Collectors.toList());
 
         logger.info(txnReferenceNumber + " OTP list" + otpList);
         logger.info(txnReferenceNumber + "opaque list" + opaqueList);

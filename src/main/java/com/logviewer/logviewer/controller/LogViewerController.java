@@ -1,5 +1,6 @@
 package com.logviewer.logviewer.controller;
 
+import com.logviewer.logviewer.exceptions.UnprocessableFieldException;
 import com.logviewer.logviewer.model.logviewer.SearchLogsRequest;
 import com.logviewer.logviewer.service.LogViewerService;
 
@@ -62,13 +63,17 @@ public class LogViewerController {
     }
 
     @GetMapping("otp")
-    public List<String> searchOTP(@PathVariable("envName") String envName, @RequestBody(required = false) SearchLogsRequest searchLogsRequest){
+    public List<String> searchOTP(@PathVariable("envName") String envName, @RequestBody(required = false) SearchLogsRequest searchLogsRequest) throws UnprocessableFieldException {
         logger.info("Seaching for OTP");
         if (searchLogsRequest == null){
-            searchLogsRequest= new SearchLogsRequest(); 
+            searchLogsRequest= new SearchLogsRequest();
+        }
+        String opaque = searchLogsRequest.getOpaque();
+        if (opaque!=null && opaque.length()!=4){
+            throw new UnprocessableFieldException("If opaque is given, it has to be strictly 4 characters");
         }
         logger.info(" SearchLogsRequest=" + searchLogsRequest.toString());
-        List<String> results = logViewerService.searchOTP(envName,searchLogsRequest.getDate()==null?null:searchLogsRequest.getDate().toString().replaceAll("-",""), searchLogsRequest.getTxnReferenceNumber(), searchLogsRequest.getUsername());
+        List<String> results = logViewerService.searchOTP(envName,searchLogsRequest.getDate()==null?null:searchLogsRequest.getDate().toString().replaceAll("-",""), searchLogsRequest.getTxnReferenceNumber(), searchLogsRequest.getUsername(),searchLogsRequest.getOpaque());
         return results;
     }
 }

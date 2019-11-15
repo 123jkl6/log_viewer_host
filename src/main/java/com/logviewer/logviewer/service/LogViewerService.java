@@ -54,8 +54,25 @@ public class LogViewerService {
         return result;
     }
 
-    public List<String> searchOTP(String envName, String date, String txnReferenceNumber, String username) {
-        return searchLogs(envName,date,txnReferenceNumber, ServiceName.GENERATE_OTP,username);
+    public List<String> searchOTP(String envName, String date, String txnReferenceNumber, String username,String opaque) {
+        List<String> searchResults = searchLogs(envName,date,txnReferenceNumber, ServiceName.GENERATE_OTP,username);
+        List<String> finalResults = new ArrayList<String>();
+
+        if (opaque!=null){
+            for (String oneResult:searchResults){
+                getSingleLog(envName,oneResult);
+                String otpLogs = getSingleLogText(envName,oneResult);
+                if (otpLogs.contains(opaque)){
+                    finalResults.add(oneResult);
+                }
+
+            }
+        }
+        else {
+            finalResults = searchResults;
+        }
+
+        return finalResults;
     }
 
     public List<String> searchLogs(String envName, String date, String txnReferenceNumber, String serviceName,String username){
@@ -242,6 +259,20 @@ public class LogViewerService {
 
         try {
             logsResults = logViewerDAO.getSingleLog(envName, date, fileName);
+        }
+        catch (IOException ioe){
+            ioe.printStackTrace();
+        }
+        return logsResults;
+    }
+
+    public String getSingleLogText(String envName, String fileName){
+        String logsResults = null;
+        String[] fileNameStringArr = fileName.split("T");
+        String date =  fileNameStringArr[0];
+
+        try {
+            logsResults = logViewerDAO.getSingleLogText(envName, date, fileName);
         }
         catch (IOException ioe){
             ioe.printStackTrace();
