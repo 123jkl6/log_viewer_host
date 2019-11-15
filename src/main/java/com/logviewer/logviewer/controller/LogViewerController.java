@@ -60,4 +60,15 @@ public class LogViewerController {
         logger.info("Retrieved logs for "+fileName);
         return logs;
     }
+
+    @GetMapping("otp")
+    public List<String> searchOTP(@PathVariable("envName") String envName, @RequestBody(required = false) SearchLogsRequest searchLogsRequest){
+        logger.info("Seaching for OTP");
+        if (searchLogsRequest == null){
+            searchLogsRequest= new SearchLogsRequest(); 
+        }
+        logger.info(" SearchLogsRequest=" + searchLogsRequest.toString());
+        List<String> results = logViewerService.searchOTP(envName,searchLogsRequest.getDate()==null?null:searchLogsRequest.getDate().toString().replaceAll("-",""), searchLogsRequest.getTxnReferenceNumber(), searchLogsRequest.getUsername());
+        return results;
+    }
 }

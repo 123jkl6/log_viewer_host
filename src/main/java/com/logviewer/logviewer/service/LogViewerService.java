@@ -1,5 +1,6 @@
 package com.logviewer.logviewer.service;
 
+import com.logviewer.logviewer.constants.ServiceName;
 import com.logviewer.logviewer.dao.LogViewerDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,10 @@ public class LogViewerService {
             result.add(oneFileNameArr[oneFileNameArr.length-1]);
         }
         return result;
+    }
+
+    public List<String> searchOTP(String envName, String date, String txnReferenceNumber, String username) {
+        return searchLogs(envName,date,txnReferenceNumber, ServiceName.GENERATE_OTP,username);
     }
 
     public List<String> searchLogs(String envName, String date, String txnReferenceNumber, String serviceName,String username){

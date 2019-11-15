@@ -10,6 +10,7 @@ public class SearchLogsRequest {
     private String username;
     private LocalDate date;
     private String serviceName;
+    private String opaque;
 
     public String getTxnReferenceNumber() {
         return txnReferenceNumber;
@@ -41,6 +42,14 @@ public class SearchLogsRequest {
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+
+    public String getOpaque() {
+        return opaque;
+    }
+
+    public void setOpaque(String opaque) {
+        this.opaque = opaque;
     }
 
     public String toString(){

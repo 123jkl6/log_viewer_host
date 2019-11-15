@@ -1,5 +1,6 @@
 package com.logviewer.logviewer.dao;
 
+import com.logviewer.logviewer.constants.ServiceName;
 import com.logviewer.logviewer.logwriter.Logwriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -23,15 +24,16 @@ public class LogViewerDAO {
 
     public List<String> getServiceNames(){
         List<String> serviceNames = new ArrayList<String>();
-        ClassPathResource cl = new ClassPathResource("service_names");
-
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(cl.getURL().openStream()))) {
-            Stream<String> stream = br.lines();
-            serviceNames = stream.collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        serviceNames = ServiceName.SERVICE_NAMES;
+//        ClassPathResource cl = new ClassPathResource("service_names");
+//
+//        try (BufferedReader br = new BufferedReader(
+//                new InputStreamReader(cl.getURL().openStream()))) {
+//            Stream<String> stream = br.lines();
+//            serviceNames = stream.collect(Collectors.toList());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return serviceNames;
     }
 
