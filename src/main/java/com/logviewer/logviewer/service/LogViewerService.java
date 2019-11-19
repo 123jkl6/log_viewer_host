@@ -62,10 +62,20 @@ public class LogViewerService {
             for (String oneResult:searchResults){
                 getSingleLog(envName,oneResult);
                 String otpLogs = getSingleLogText(envName,oneResult);
-                if (otpLogs.contains(opaque)){
+                //get response string to avoid searching for opaque in request string.
+                int rsJSONIndex = otpLogs.lastIndexOf("RS_JSON");
+                String responseString = otpLogs.substring(rsJSONIndex,otpLogs.length());
+                int opaqueIndex = responseString.indexOf("opaque");
+                //add length of the word opaque, the double quotes, the colon and length of actual opaque
+                String opaqueGenerated = responseString.substring(opaqueIndex+9,opaqueIndex+9+11);
+                //must check that first 4 characters match, not just any match in the 10 character opaque
+                logger.info("searchOtp() opaqueGenerated : "+opaqueGenerated);
+                logger.info("searchOtp() opaque : "+opaque);
+                int opaqueCheck = opaqueGenerated.indexOf(opaque);
+                logger.info("searchOtp() opaqueCheck : "+opaqueCheck);
+                if (opaqueCheck==0){
                     finalResults.add(oneResult);
                 }
-
             }
         }
         else {
