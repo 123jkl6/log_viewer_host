@@ -62,7 +62,7 @@ public class LogViewerController {
         return logs;
     }
 
-    @GetMapping("otp")
+    @PostMapping("otp")
     public List<String> searchOTP(@PathVariable("envName") String envName, @RequestBody(required = false) SearchLogsRequest searchLogsRequest) throws UnprocessableFieldException {
         logger.info("Seaching for OTP");
         if (searchLogsRequest == null){
@@ -75,5 +75,12 @@ public class LogViewerController {
         logger.info(" SearchLogsRequest=" + searchLogsRequest.toString());
         List<String> results = logViewerService.searchOTP(envName,searchLogsRequest.getDate()==null?null:searchLogsRequest.getDate().toString().replaceAll("-",""), searchLogsRequest.getTxnReferenceNumber(), searchLogsRequest.getUsername(),searchLogsRequest.getOpaque());
         return results;
+    }
+
+    @GetMapping("otp")
+    public String searchOtp(){
+        return "By default, if above post mapping for otp search is implemented and get mapping is not used, spring will return \n" +
+                "success response for get method of this path. Hence writing this message to suggest the use of post method to \n" +
+                "retrieve otp logs. ";
     }
 }
