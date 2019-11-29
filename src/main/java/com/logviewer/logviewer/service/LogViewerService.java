@@ -290,7 +290,12 @@ public class LogViewerService {
         return logsResults;
     }
 
-    public void writeLogs(String request, String response, String txnReferenceNumber, String serviceName, String username, String envName) throws IOException {
-        logViewerDAO.writeLogs(request,response,txnReferenceNumber,serviceName,username,envName);
+    public void writeLogs(String request, String response, String txnReferenceNumber, String serviceName, String username, String envName) {
+        try {
+            logViewerDAO.writeLogs(request, response, txnReferenceNumber, serviceName, username, envName);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("Failed to write logs, but will ignore error and carry on so as not to disrupt function. ");
+        }
     }
 }
