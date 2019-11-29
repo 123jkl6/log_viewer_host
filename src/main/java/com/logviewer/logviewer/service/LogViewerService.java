@@ -2,6 +2,7 @@ package com.logviewer.logviewer.service;
 
 import com.logviewer.logviewer.constants.ServiceName;
 import com.logviewer.logviewer.dao.LogViewerDAO;
+import com.logviewer.logviewer.model.logviewer.OTPLogResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +55,9 @@ public class LogViewerService {
         return result;
     }
 
-    public List<String> searchOTP(String envName, String date, String txnReferenceNumber, String username,String opaque) {
+    public List<OTPLogResponse> searchOTP(String envName, String date, String txnReferenceNumber, String username, String opaque) {
         List<String> searchResults = searchLogs(envName,date,txnReferenceNumber, ServiceName.GENERATE_OTP,username);
-        List<String> finalResults = new ArrayList<String>();
+        List<OTPLogResponse> finalResults = new ArrayList<OTPLogResponse>();
 
         if (opaque!=null){
             for (String oneResult:searchResults){
@@ -74,12 +75,35 @@ public class LogViewerService {
                 int opaqueCheck = opaqueGenerated.indexOf(opaque);
                 logger.info("searchOtp() opaqueCheck : "+opaqueCheck);
                 if (opaqueCheck==0){
-                    finalResults.add(oneResult);
+                    OTPLogResponse otpLogResponse = new OTPLogResponse();
+                    int otpIndex = responseString.indexOf("otp",opaqueIndex+9+10);
+                    String otpGenerated = responseString.substring(otpIndex+6,otpIndex+6+6);
+                    otpLogResponse.setOtp(otpGenerated);
+                    otpLogResponse.setOtpFileName(oneResult);
+                    finalResults.add(otpLogResponse);
                 }
             }
         }
         else {
-            finalResults = searchResults;
+            for (String oneResult:searchResults){
+                getSingleLog(envName,oneResult);
+                String otpLogs = getSingleLogText(envName,oneResult);
+                //get response string to avoid searching for opaque in request string.
+                int rsJSONIndex = otpLogs.lastIndexOf("RS_JSON");
+                String responseString = otpLogs.substring(rsJSONIndex,otpLogs.length());
+                int opaqueIndex = responseString.indexOf("opaque");
+                //add length of the word opaque, the double quotes, the colon and length of actual opaque
+                String opaqueGenerated = responseString.substring(opaqueIndex+9,opaqueIndex+9+10);
+                //must check that first 4 characters match, not just any match in the 10 character opaque
+                logger.info("searchOtp() opaqueGenerated : "+opaqueGenerated);
+
+                OTPLogResponse otpLogResponse = new OTPLogResponse();
+                int otpIndex = responseString.indexOf("otp",opaqueIndex+9+10);
+                String otpGenerated = responseString.substring(otpIndex+6,otpIndex+6+6);
+                otpLogResponse.setOtp(otpGenerated);
+                otpLogResponse.setOtpFileName(oneResult);
+                finalResults.add(otpLogResponse);
+            }
         }
 
         return finalResults;
