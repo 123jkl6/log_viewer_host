@@ -322,4 +322,8 @@ public class LogViewerService {
             logger.error("Failed to write logs, but will ignore error and carry on so as not to disrupt function. ");
         }
     }
+
+    public List<String> getSSOLogs(String envName,String currentDate){
+        return logViewerDAO.getSSOLogsByDate( envName, currentDate);
+    }
 }

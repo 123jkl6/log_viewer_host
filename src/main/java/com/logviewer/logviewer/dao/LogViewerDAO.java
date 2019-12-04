@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -82,4 +83,22 @@ public class LogViewerDAO {
         System.out.println("written to "+fileName);
     }
 
+    public List<String> getSSOLogsByDate(String envName,String currentDate){
+        List<String> result = new ArrayList<String>();
+
+        try (Stream<Path> walk = Files.walk(Paths.get(logsPath+"/"+envName+"/sso"))) {
+            result = walk.filter(Files::isRegularFile)
+                    .map(x -> x.toString()).collect(Collectors.toList());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result.stream().filter(oneFile->{
+            System.out.println(oneFile);
+            String[] oneFileArr = oneFile.split("\\.");
+            System.out.println(Arrays.deepToString(oneFileArr));
+            String dateString = oneFileArr[2].replaceAll("-","");
+            return dateString.equals(currentDate);
+        }).collect(Collectors.toList());
+    }
 }

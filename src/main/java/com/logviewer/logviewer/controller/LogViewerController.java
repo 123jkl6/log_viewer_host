@@ -1,6 +1,7 @@
 package com.logviewer.logviewer.controller;
 
 import com.logviewer.logviewer.exceptions.UnprocessableFieldException;
+import com.logviewer.logviewer.model.logviewer.FileListRequest;
 import com.logviewer.logviewer.model.logviewer.OTPLogResponse;
 import com.logviewer.logviewer.model.logviewer.SearchLogsRequest;
 import com.logviewer.logviewer.service.LogViewerService;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
@@ -83,5 +86,24 @@ public class LogViewerController {
         return "By default, if above post mapping for otp search is implemented and get mapping is not used, spring will return \n" +
                 "success response for get method of this path. Hence writing this message to suggest the use of post method to \n" +
                 "retrieve otp logs. ";
+    }
+
+    @GetMapping("filelist")
+    public List<String> searchFileList(@RequestBody FileListRequest fileListRequest, @PathVariable("envName") String envName){
+        LocalDate dateInput = null;
+        List<String> fileListResults = new ArrayList<>();
+        if (fileListRequest.getDate()==null){
+            dateInput = LocalDate.now();
+        } else {
+            dateInput = fileListRequest.getDate();
+        }
+
+        if (fileListRequest.isSso()){
+            //based on above processing, dateInput will never be null
+            List<String> tempList = logViewerService.getSSOLogs(envName,dateInput.toString().replaceAll("-",""));
+            fileListResults.addAll(tempList);
+        }
+
+        return fileListResults;
     }
 }
